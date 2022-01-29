@@ -1,0 +1,34 @@
+name: Build and Deploy
+on:
+  push:	
+    branches:	
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+      with:
+        submodules: true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install dependencies & Generate static files
+      run: |
+        node -v
+        npm i -g hexo-cli
+        npm i
+        hexo clean
+        hexo g
+
+    - name: Build and Deploy
+      uses: hanelalo/hexo-deploy-action@master
+      env:
+        PERSONAL_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        PUBLISH_REPOSITORY: rjwx60/blogs # The repository the action should deploy to.
+        BRANCH: blog  # The branch the action should deploy to.
+        PUBLISH_DIR: ./public # The folder the action should deploy.
